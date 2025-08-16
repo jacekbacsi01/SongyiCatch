@@ -72,6 +72,8 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.InetSocketAddress
 
+
+
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 //-------map variables
     private lateinit var compassOverlay: CompassOverlay
@@ -118,13 +120,44 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     // --- Sonda data tömb a több szonda kezeléséhez ---
     data class SondaData(
+        val lat: Double,
+        val lon: Double,
+        val alt: Double,
+        val vs: Double,
+        val hs: Double,
+        val climb: Double,
+        val speed: Double,
+        val dir: Double,
+        val temp: Double,
+        val humidity: Double,
+        val pressure: Double,
+        val type: String,
         val id: String,
         val ser: String,
-        var lat: Double,
-        var lon: Double,
-        var alt: Double,
-        var spd: Double
+        val frame: Int,
+        val vframe: Int,
+        val time: Long,
+        val sats: Int,
+        val freq: Double,
+        val rssi: Double,
+        val afc: Int,
+        val launchKT: Int,
+        val burstKT: Int,
+        val countKT: Int,
+        val crefKT: Int,
+        val launchsite: String,
+        val res: Int,
+        val batt: Double,
+        val active: Int,
+        val validId: Int,
+        val validPos: Int,
+        val gpslat: Double,
+        val gpslon: Double,
+        val gpsalt: Double,
+        val gpsacc: Int,
+        val gpsdir: Int
     )
+
     val sondData = mutableMapOf<String, SondaData>()
 
     private val serviceType = "_http._tcp."  // vagy amilyen az rdzsonde szolgáltatás típusa
@@ -504,8 +537,51 @@ override fun onDestroy() {
   "gpsdir": 39
 }
 """.trimIndent()
+        //47.94050949058958, 21.812548467085207
+        val jso2 = """
+{
+  "lat": 47.94050,
+  "lon": 21.81254,
+  "alt": 21000.7,
+  "vs": 5.5,
+  "hs": 1.2,
+  "climb": 5.5,
+  "speed": 1.2,
+  "dir": 242.7,
+  "temp": -55.9,
+  "humidity": 1.4,
+  "pressure": 39.9,
+  "type": "RS41-SGP",
+  "id": "X2233034",
+  "ser": "X2233034",
+  "frame": 5288,
+  "vframe": 5288,
+  "time": 1755346973,
+  "sats": 9,
+  "freq": 403.70,
+  "rssi": 211.0,
+  "afc": 488,
+  "launchKT": 65535,
+  "burstKT": 30600,
+  "countKT": 65535,
+  "crefKT": 5253,
+  "launchsite": "Budapest",
+  "res": 0,
+  "batt": 2.6,
+  "active": 1,
+  "validId": 1,
+  "validPos": 127,
+  "gpslat": 47.51360,
+  "gpslon": 19.28762,
+  "gpsalt": 194,
+  "gpsacc": 0,
+  "gpsdir": 39
+}
+""".trimIndent()
         val jsonObjtmp = JSONObject(jso)
         updateSonda(jsonObjtmp)
+        val jsonObjtmp2 = JSONObject(jso2)
+        updateSonda(jsonObjtmp2)
     }
 
     fun updateSondeInfo(
@@ -865,166 +941,102 @@ private fun showSondaMarkerMenu(marker: Marker) {
     val sondMarkers = mutableMapOf<String, Marker>()
 
     private fun updateSonda(jsonObject: JSONObject) {
-
         val id = jsonObject.getString("id")
-        val ser = jsonObject.getString("ser")
         val type = jsonObject.getString("type")
-        val frame = jsonObject.getInt("frame")
-        val vframe = jsonObject.getInt("vframe")
-        val time = jsonObject.getInt("time")
-        val sats = jsonObject.getInt("sats")
-        val freq = jsonObject.getDouble("freq")
-        val rssi = jsonObject.getDouble("rssi")
-        val afc = jsonObject.getInt("afc") // auto freq control
-        val launchKT = jsonObject.getInt("launchKT")
-        val burstKT = jsonObject.getInt("burstKT")
-        val countKT = jsonObject.getInt("countKT")
-        val crefKT = jsonObject.getInt("crefKT")
-        val launchsite = jsonObject.getString("launchsite")
-        val res = jsonObject.getInt("res")
-        val active = jsonObject.getInt("active")
-        val validId = jsonObject.getInt("validId")
-        val validPos = jsonObject.getInt("validPos")
+        val ser = jsonObject.getString("ser")
+        val validPos = jsonObject.optInt("validPos", 0)
+        val validId = jsonObject.optInt("validId", 0)
 
-        //val key = "$id"  // egyedi kulcs a markerhez
-        println(id)
-        val marker = sondMarkers[id]
+        // Sonda adatok kinyerése
+        val lat = jsonObject.optDouble("lat", 0.0)
+        val lon = jsonObject.optDouble("lon", 0.0)
+        val alt = jsonObject.optDouble("alt", 0.0)
+        val speed = jsonObject.optDouble("speed", 0.0)
+        val hs = jsonObject.optDouble("hs", 0.0)
+        val vs = jsonObject.optDouble("vs", 0.0)
+        val batt = jsonObject.optDouble("batt", 0.0)
 
-        // HA VALID ADATOK JÖNNEK EZT KÜLDI PLUSSZBA
+        // Sonda objektum mentése a mapbe
+        val sonda = SondaData(
+            id = id,
+            type = type,
+            ser = ser,
+            lat = lat,
+            lon = lon,
+            alt = alt,
+            vs = vs,
+            hs = hs,
+            climb = jsonObject.optDouble("climb", 0.0),
+            speed = speed,
+            dir = jsonObject.optDouble("dir", 0.0),
+            temp = jsonObject.optDouble("temp", 0.0),
+            humidity = jsonObject.optDouble("humidity", 0.0),
+            pressure = jsonObject.optDouble("pressure", 0.0),
+            frame = jsonObject.optInt("frame", 0),
+            vframe = jsonObject.optInt("vframe", 0),
+            time = jsonObject.optLong("time", 0L),
+            sats = jsonObject.optInt("sats", 0),
+            freq = jsonObject.optDouble("freq", 0.0),
+            rssi = jsonObject.optDouble("rssi", 0.0),
+            afc = jsonObject.optInt("afc", 0),
+            launchKT = jsonObject.optInt("launchKT", 0),
+            burstKT = jsonObject.optInt("burstKT", 0),
+            countKT = jsonObject.optInt("countKT", 0),
+            crefKT = jsonObject.optInt("crefKT", 0),
+            launchsite = jsonObject.optString("launchsite", ""),
+            res = jsonObject.optInt("res", 0),
+            batt = batt,
+            active = jsonObject.optInt("active", 0),
+            validId = validId,
+            validPos = validPos,
+            gpslat = jsonObject.optDouble("gpslat", lat),
+            gpslon = jsonObject.optDouble("gpslon", lon),
+            gpsalt = jsonObject.optDouble("gpsalt", alt),
+            gpsacc = jsonObject.optInt("gpsacc", 0),
+            gpsdir = jsonObject.optInt("gpsdir", 0)
+        )
+        sondData[id] = sonda
+
         if (validPos > 0 && validId > 0) {
-            // Saját GPS koord-ja?
-            val gpslat = jsonObject.getDouble("gpslat")
-            val gpslon = jsonObject.getDouble("gpslon")
-            val gpsalt = jsonObject.getDouble("gpsalt")
-            val gpsacc = jsonObject.getDouble("gpsacc")
-            val gpsdir = jsonObject.getDouble("gpsdir")
-            // SONGYI ADATOK
-            val slat = jsonObject.getDouble("lat")
-            val slon = jsonObject.getDouble("lon")
-            val alt = jsonObject.getDouble("alt")
-            val batt = jsonObject.getDouble("batt")
-            val pressure = jsonObject.getDouble("pressure")
-            val humidity = jsonObject.getDouble("humidity")
-            val temp = jsonObject.getDouble("temp")
-            val dir = jsonObject.getDouble("dir")
-            val speed = jsonObject.getDouble("speed")
-            val climb = jsonObject.getDouble("climb")
-            val hs = jsonObject.getDouble("hs")
-            val vs = jsonObject.getDouble("vs")
-            val launchsite = jsonObject.getString("launchsite")
+            val point = GeoPoint(lat, lon)
 
-            //val point = GeoPoint(gpslat, gpslon)
-
-    if (sondMarkers.containsKey(id)) { // ha van key frissit
-        // Marker már létezik -> frissítjük
-        println("----MARKER UPDATEEE----")
-        marker?.position = GeoPoint(gpslat.toDouble(), gpslon.toDouble())
-        marker?.title = "${jsonObject.getString("type")} $id\nSer: $ser\nALT: ${
-            jsonObject.optDouble(
-                "alt",
-                0.0
-            )
-        } m SPD: ${jsonObject.optDouble("speed", 0.0)} km/h"
-        marker?.showInfoWindow() // opcionális
-
-        val distFromMe =
-            distanceInMeters(myLocationOverlay.myLocation, sondLocationMarker?.position)
-        var myalt: Double
-        val location = myLocationOverlay.myLocation
-        if (location != null && !location.altitude.isNaN()) {
-            myalt = location.altitude // Méterben, Double
-            println("Tengerszint feletti magasság: $myalt m")
-        } else {
-            myalt = -0.0
-            println("Magasság nem elérhető.")
-        }
-        if (active == 0) {
-            updateSondeInfo(
-                "\uD83D\uDFE1 ${jsonObject.getString("type")} Songyi - Offline",
-                ser,
-                frame.toString(),
-                sats.toString(),
-                hs,
-                vs,
-                burstKT.toDouble(),
-                alt,
-                speed,
-                temp,
-                slat,
-                slon,
-                myalt,
-                freq,
-                distFromMe
-            )
-        } else {
-            updateSondeInfo(
-                "\uD83D\uDFE2 ${jsonObject.getString("type")} Songyi - Online",
-                ser,
-                frame.toString(),
-                sats.toString(),
-                hs,
-                vs,
-                burstKT.toDouble(),
-                alt,
-                speed,
-                temp,
-                slat,
-                slon,
-                myalt,
-                freq,
-                distFromMe
-            )
-        }
-    } else { // ha nincs key marker add
-        // Új marker létrehozása
-        println("----MARKER ADD----")
-        val marker = Marker(map).apply {
-            position = GeoPoint(slat.toDouble(), slon.toDouble())
-            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            title = "#${
-                jsonObject.optDouble(
-                    "frame",
-                    0.0
-                )
-            } ${jsonObject.getString("type")} $id\nSer: $ser\nALT: ${
-                jsonObject.optDouble(
-                    "alt",
-                    0.0
-                )
-            } m SPD: ${jsonObject.optDouble("spd", 0.0)} km/h\nHS: ${
-                jsonObject.optDouble(
-                    "hs",
-                    0.0
-                )
-            }\nVS:${jsonObject.optDouble("vs", 0.0)}"
-            icon = ContextCompat.getDrawable(this@MainActivity, R.drawable.songyi)
-            map.overlays.add(this)
-            this.showInfoWindow()
-            map.controller.animateTo(this.position)
-            this.setOnMarkerClickListener { _, _ ->
-                showSondaMarkerMenu(this)
-                true
-            }
-        }
-        sondMarkers[id] = marker
-    }
-
-    map.invalidate()
-
-        } else { // validpos == 0 - NINCS GPS KOORD!!!!!! CSAK FRISSITJUK AZ INFO ABLAKOT ÉS A TÖMBÖT
-            //updateSonda(jsonObject)
-            val location = myLocationOverlay.myLocation
-            var myalt: Double
-            if (location != null && !location.altitude.isNaN()) {
-                myalt = location.altitude // Méterben, Double
-                println("Tengerszint feletti magasság: $myalt m")
+            if (sondMarkers.containsKey(id)) {
+                // Létező marker frissítése
+                val marker = sondMarkers[id]
+                marker?.position = point
+                marker?.title = "${type} $id\nALT: $alt m\nSPD: $speed km/h\nHS: $hs\nVS: $vs"
+                marker?.showInfoWindow()
             } else {
-                myalt = -0.0
-                println("Magasság nem elérhető.")
+                // Új marker létrehozása
+                val newMarker = Marker(map).apply {
+                    position = point
+                    relatedObject = id
+                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    icon = ContextCompat.getDrawable(this@MainActivity, R.drawable.songyi)
+                    title = "${type} $id\nALT: $alt m\nSPD: $speed km/h\nHS: $hs\nVS: $vs"
+
+                    setOnMarkerClickListener { clickedMarker, _ ->
+                        val clickedId = clickedMarker.relatedObject as? String
+                        clickedId?.let {
+                            sondData[it]?.let { s ->
+                                Log.d("SONDA", "Kattintott szonda: ${s.id}, Alt: ${s.alt}, Lat: ${s.lat}, Lon: ${s.lon}")
+                            }
+                        }
+                        showSondaMarkerMenu(clickedMarker)
+                        true
+                    }
+
+                    map.overlays.add(this)
+                }
+                sondMarkers[id] = newMarker
             }
-            val distFromMe = distanceInMeters(myLocationOverlay.myLocation, marker?.position)
-            updateSondeInfo("🟠 ${jsonObject.getString("type")} Songyi - Offline","X1927643","1234","13",5.0,5.0,34000.0,190.0,13.0,-14.0,-0.0,-0.0,myalt, 403.7000000, distFromMe)
+        } else {
+            // Offline marker, csak title frissítés
+            sondMarkers[id]?.title = "${type} $id - Offline"
+            sondMarkers[id]?.showInfoWindow()
         }
+
+        map.invalidate()
     }
 
     private fun drawBurstMarker(point: GeoPoint): Marker {
