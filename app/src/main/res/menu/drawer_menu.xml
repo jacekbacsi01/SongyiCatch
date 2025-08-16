@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/group_main" android:checkableBehavior="single">
+        <item android:title="SongyiCatch v1.0">
+        <menu>
+        <item
+            android:id="@+id/nav_home"
+            android:title="Infó menü" />
+        <item
+            android:id="@+id/nav_map_layers"
+            android:title="Térkép rétegek" />
+        <item
+            android:id="@+id/nav_customize"
+            android:title="Kinézet és megjelenés" />
+        </menu>
+        </item>
+    </group>
+
+    <item android:title="Beállítások és egyéb">
+        <menu>
+            <item
+                android:id="@+id/nav_tawhiri_settings"
+                android:title="Tawhiri predikció testreszab" />
+            <item
+                android:id="@+id/nav_help"
+                android:title="TTGO/Radio Opciók" />
+            <item
+                android:id="@+id/nav_about"
+                android:title="Névjegy" />
+        </menu>
+    </item>
+
+</menu>

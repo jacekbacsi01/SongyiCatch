@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SongyiCatch</string>
+    <string name="navigation_drawer_open">Menü megnyitása</string>
+    <string name="navigation_drawer_close">Menü bezárása</string>
+</resources>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <TextView
+                    android:id="@+id/text_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tawhiri Predikció Beállítások"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textColor="#222222"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Beállítható értékek -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Ascent rate (m/s)">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_ascent_rate"
+                        android:inputType="numberDecimal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Descent rate (m/s)"
+                    android:layout_marginTop="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_descent_rate"
+                        android:inputType="numberDecimal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Burst altitude (m)"
+                    android:layout_marginTop="12dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_burst_altitude"
+                        android:inputType="numberDecimal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:id="@+id/text_fixed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ÖRÖKÖLT BEÁLLÍTÁSOK"
+                    android:paddingTop="16dp"
+                    android:textStyle="bold"
+                    android:textColor="#555555" />
+                <!-- Nem módosítható, csak megjelenített adatok -->
+                <TextView
+                    android:id="@+id/text_launch_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kilövési idő: 2025-08-02 15:30 UTC"
+                    android:paddingTop="16dp"
+                    android:textColor="#555555" />
+
+                <TextView
+                    android:id="@+id/text_latlon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kilövési pozíció: 47.4979, 19.0402"
+                    android:paddingTop="4dp"
+                    android:textColor="#555555" />
+
+                <TextView
+                    android:id="@+id/text_prediction_model"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Flight profil: Standard"
+                    android:paddingTop="4dp"
+                    android:textColor="#555555" />
+
+                <!-- Mentés gomb -->
+                <Button
+                    android:id="@+id/button_save_tawhiri"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Mentés"
+                    android:layout_marginTop="20dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+</ScrollView>

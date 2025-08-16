@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/mapLayerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OSM Térképréteg kiválasztása"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:layout_marginBottom="16dp" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupMapLayers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/radioMapnik"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OpenStreetMap Mapnik (Javasolt)" />
+
+            <RadioButton
+                android:id="@+id/radioUSGS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="USGS Topo" />
+
+            <RadioButton
+                android:id="@+id/radioHikeBike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hike - Bike" />
+
+            <RadioButton
+                android:id="@+id/radioStamenToner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stamen Toner" />
+
+            <RadioButton
+                android:id="@+id/radioStamenWatercolor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stamen Watercolor" />
+
+            <RadioButton
+                android:id="@+id/radioEsriSat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Esri Satellite" />
+
+            <RadioButton
+                android:id="@+id/radioEsriTopo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Esri Topo" />
+
+            <RadioButton
+                android:id="@+id/radioBase"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OSM Base (alap)" />
+
+        </RadioGroup>
+    </LinearLayout>
+</ScrollView>
