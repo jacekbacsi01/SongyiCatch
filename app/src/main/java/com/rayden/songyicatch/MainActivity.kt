@@ -8,6 +8,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
 import android.net.Uri
 import android.net.nsd.NsdManager
@@ -159,6 +163,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     )
 
     val sondData = mutableMapOf<String, SondaData>()
+    var selectedSondaId: String? = null
 
     private val serviceType = "_http._tcp."  // vagy amilyen az rdzsonde szolgáltatás típusa
     //json tcp end
@@ -167,6 +172,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     // nsdManager = getSystemService(NSD_SERVICE) as NsdManager
    // startServiceDiscovery()
     //val bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
@@ -221,7 +227,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     )
     checkAndRequestPermissions()
         // -----MapView inicializálása INNENTŐL LEHET A MAP VÁLTOZÓT MEGHÍNI-----
-        map = findViewById(R.id.map)
+
+    map = findViewById(R.id.map)
         // Toolbar beállítása (feltételezve, hogy van toolbar a layoutban)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -257,7 +264,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         compassOverlay.enableCompass()
         map.overlays.add(compassOverlay)
-        setupSondeInfoPanel() //be kell initelni mert crashel
+
+    setupSondeInfoPanel() //be kell initelni mert crashel
 
         map.overlays.add(object : Overlay(this) { // Hosszú lenyomás Overlay
             override fun onLongPress(event: MotionEvent?, mapView: MapView?): Boolean {
@@ -327,7 +335,7 @@ override fun onDestroy() {
 }
     val job = CoroutineScope(Dispatchers.Main).launch {
         while (isActive) {
-            simulatePrediction()
+           // simulatePrediction()
             delay(1000) // 1 másodperc
         }
     }
@@ -429,7 +437,7 @@ override fun onDestroy() {
                         Log.d("RDZ", "Received JSON: $line")
                         val file = File(this.getExternalFilesDir(""), "bejovo-kimenet.json")
                         file.appendText(line.trim() + "\n")
-                        Toast.makeText(this@MainActivity, "JSON Adat érkezett! OUT: ${line}", Toast.LENGTH_SHORT).show() // Felugró debug szöveg ha van longpress
+                        // Toast.makeText(this@MainActivity, "JSON Adat érkezett! OUT: ${line}", Toast.LENGTH_SHORT).show() // Felugró debug szöveg ha van longpress
                         // Itt parseolhatod és tárolhatod a JSON-t változókba, ha kell
                     }
                     Log.d("RDZ", "Connection closed by server")
@@ -568,7 +576,7 @@ override fun onDestroy() {
   "launchsite": "Budapest",
   "res": 0,
   "batt": 2.6,
-  "active": 1,
+  "active": 0,
   "validId": 1,
   "validPos": 127,
   "gpslat": 47.51360,
@@ -869,7 +877,8 @@ private fun showSondaMarkerMenu(marker: Marker) {
             }
             4 -> { // predict settings
                 // (később meg kell csinálni külön activity-ként)
-                Toast.makeText(this, "Beállítások megnyitása...", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(this, "Beállítások megnyitása...", Toast.LENGTH_SHORT).show()
+                showTawhiriSettingsDialog()
             }
             5 -> { // térkép export – képernyőkép, GPX export stb.
                 Toast.makeText(this, "Exportálás folyamatban...", Toast.LENGTH_SHORT).show()
@@ -883,7 +892,8 @@ private fun showSondaMarkerMenu(marker: Marker) {
                     val results = FloatArray(1)
                     Location.distanceBetween(
                         myLocation.latitude, myLocation.longitude,
-                        sondLocationMarker?.position!!.latitude, sondLocationMarker?.position!!.longitude,
+                       // sondLocationMarker?.position!!.latitude, sondLocationMarker?.position!!.longitude,
+                        marker.position.latitude, marker.position.longitude,
                         results
                     )
                     val distanceInMeters = results[0]
@@ -939,6 +949,21 @@ private fun showSondaMarkerMenu(marker: Marker) {
 
     // id+ser -> Marker
     val sondMarkers = mutableMapOf<String, Marker>()
+
+    private fun getmyalt(): Double
+    {
+        var myalt: Double
+        val location = myLocationOverlay.myLocation
+        if (location != null && !location.altitude.isNaN()) {
+            myalt = location.altitude // Méterben, Double
+            println("Tengerszint feletti magasság: $myalt m")
+            return myalt
+        } else {
+            myalt = -0.0
+            println("Magasság nem elérhető.")
+            return myalt
+        }
+    }
 
     private fun updateSonda(jsonObject: JSONObject) {
         val id = jsonObject.getString("id")
@@ -996,16 +1021,29 @@ private fun showSondaMarkerMenu(marker: Marker) {
             gpsdir = jsonObject.optInt("gpsdir", 0)
         )
         sondData[id] = sonda
-
         if (validPos > 0 && validId > 0) {
             val point = GeoPoint(lat, lon)
+            var astmp = 0.0
+            var dstmp = 0.0
+            if(sonda.vs > 0){ // ascent +
+                astmp = sonda.vs
+                dstmp = 0.0
+            } else { //descent -
+                astmp = 0.0
+                dstmp = sonda.vs
+            }
+            if(sonda.active > 0){
+                updateSondeInfo("\uD83D\uDFE2 ${sonda.type}", sonda.ser, sonda.frame.toString(),sonda.sats.toString(), astmp, dstmp, sonda.burstKT.toDouble(), sonda.alt, sonda.speed, sonda.temp, sonda.lat, sonda.lon, getmyalt(),sonda.freq,distanceInMeters(GeoPoint(sonda.lat, sonda.lon), myLocationOverlay.myLocation))
+            } else {
+                updateSondeInfo("\uD83D\uDFE1 ${sonda.type}", sonda.ser, sonda.frame.toString(),sonda.sats.toString(), astmp, dstmp, sonda.burstKT.toDouble(), sonda.alt, sonda.speed, sonda.temp, sonda.lat, sonda.lon, getmyalt(),sonda.freq,distanceInMeters(GeoPoint(sonda.lat, sonda.lon), myLocationOverlay.myLocation))
+            }
 
             if (sondMarkers.containsKey(id)) {
                 // Létező marker frissítése
                 val marker = sondMarkers[id]
                 marker?.position = point
                 marker?.title = "${type} $id\nALT: $alt m\nSPD: $speed km/h\nHS: $hs\nVS: $vs"
-                marker?.showInfoWindow()
+               // marker?.showInfoWindow()
             } else {
                 // Új marker létrehozása
                 val newMarker = Marker(map).apply {
@@ -1022,6 +1060,7 @@ private fun showSondaMarkerMenu(marker: Marker) {
                                 Log.d("SONDA", "Kattintott szonda: ${s.id}, Alt: ${s.alt}, Lat: ${s.lat}, Lon: ${s.lon}")
                             }
                         }
+                        clickedMarker.showInfoWindow()
                         showSondaMarkerMenu(clickedMarker)
                         true
                     }

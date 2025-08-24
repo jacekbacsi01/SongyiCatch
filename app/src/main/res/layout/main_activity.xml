@@ -13,6 +13,7 @@
         android:layout_height="match_parent">
 
         <!-- Itt egy FrameLayout a MapView köré -->
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -26,52 +27,59 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
+
             <LinearLayout
                 android:id="@+id/sondeInfoPanel"
-                android:layout_width="wrap_content"
+                android:layout_width="416dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="top|center"
+                android:layout_margin="12dp"
+                android:background="@drawable/info_panel_bg"
+                android:elevation="8dp"
                 android:orientation="vertical"
                 android:padding="10dp"
-                android:visibility="visible"
-                android:background="@drawable/info_panel_bg"
-                android:layout_margin="12dp"
-                android:layout_gravity="top|end"
-                android:elevation="8dp">
+                android:visibility="visible">
+
                 <TextView
                     android:id="@+id/textConnect"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🟠 RS41 - Offline"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textSerial"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🆔 Serial: -"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textFrame"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="#️⃣ Frame: #-"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textFreq"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="📡 Freq: - Mhz"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textTemperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🌡 Hőmérséklet: - °C"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textAltitude"
                     android:layout_width="wrap_content"
@@ -79,76 +87,87 @@
                     android:text="🏔️ Magasság: - m"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textSpeed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🚀 Sebesség: - m/s"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:text="🚀 Sebesség: - km/h"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textCoordinates"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="📍 Lat: -, Lon: -"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textSats"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🛰️ Műholdak: -"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textAscent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="⬆️ Emelkedés: - m/s"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textDescent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="⬇️ Süllyedés: - m/s"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textBurst"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="💥 Eldurranás: - m"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textSelfAlt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="📈 Saját Alt: - m"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textDistance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="📏 Távolság: - m"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/textTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="⏰ Idő: 1980.01.01. 00:00:00"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
             <org.osmdroid.views.MapView
                 android:id="@+id/map"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
+
+            </org.osmdroid.views.MapView>
 
         </FrameLayout>
     </LinearLayout>
@@ -158,6 +177,8 @@
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/drawer_menu" />
+        app:menu="@menu/drawer_menu" >
+
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>
